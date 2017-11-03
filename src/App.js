@@ -102,7 +102,6 @@ class App extends Component {
         return (
             <div className="App">
                 <div>
-                    <h1>hello world</h1>
                     <SearchBar
                         onClick={this.fetch_data}
                         onChange={event => {
