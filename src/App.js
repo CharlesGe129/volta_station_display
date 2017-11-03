@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import logo from './logo.svg';
 import './App.css';
 import {Map, InfoWindow, Marker, GoogleApiWrapper} from 'google-maps-react';
+import SearchBar from './SearchBar'
 
 class App extends Component {
 
@@ -29,9 +30,9 @@ class App extends Component {
         };
         this.onMarkerClick = this.onMarkerClick.bind(this);
         this.onMapClicked = this.onMapClicked.bind(this);
-        this.clickSearch = this.clickSearch.bind(this);
         this.gen_url = this.gen_url.bind(this);
         this.fetch_data = this.fetch_data.bind(this);
+        this.test = this.test.bind(this);
     }
 
     componentWillMount() {
@@ -85,6 +86,10 @@ class App extends Component {
         }
     }
 
+    test() {
+        console.log(123);
+    }
+
     render() {
         if (!this.state.loaded) {
             return (
@@ -95,7 +100,7 @@ class App extends Component {
             <div className="App">
                 <div>
                     <h1>hello world</h1>
-                    <input type={'text'} onChange={event => {
+                    <SearchBar onClick={this.fetch_data} onChange={event => {
                         console.log(event.target.value);
                         this.setState({
                             searchParam: {
@@ -103,8 +108,7 @@ class App extends Component {
                                 limit: '5'
                             }
                         })
-                    }} />
-                    <button onClick={this.fetch_data}>Search</button>
+                    }}/>
                 </div>
                 <div>
                     <Map google={this.props.google} zoom={13} initialCenter={{
