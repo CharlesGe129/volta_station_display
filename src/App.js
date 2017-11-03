@@ -27,19 +27,20 @@ class App extends Component {
             showingInfoWindow: false,
             activeMarker: {},
             selectedPlace: {},
+            advanced_search_visible: 'hidden'
         };
         this.onMarkerClick = this.onMarkerClick.bind(this);
         this.onMapClicked = this.onMapClicked.bind(this);
-        this.gen_url = this.gen_url.bind(this);
-        this.fetch_data = this.fetch_data.bind(this);
-        this.test = this.test.bind(this);
+        this.genUrl = this.genUrl.bind(this);
+        this.fetchData = this.fetchData.bind(this);
+        this.showAdvancedSearch = this.showAdvancedSearch.bind(this);
     }
 
     componentWillMount() {
-        this.fetch_data();
+        this.fetchData();
     }
 
-    gen_url() {
+    genUrl() {
         let url = "https://api.voltaapi.com/v1/stations";
         let param = '';
         for (let key in this.state.searchParam) {
@@ -55,11 +56,11 @@ class App extends Component {
         return url;
     }
 
-    fetch_data() {
+    fetchData() {
         this.setState({
             loaded: false
         });
-        fetch(this.gen_url(), {
+        fetch(this.genUrl(), {
             Method: 'GET'
         })
             .then((response) => response.json())
@@ -81,6 +82,9 @@ class App extends Component {
     }
 
     onMapClicked(props) {
+        this.setState({
+            advanced_search_visible: 'hidden'
+        });
         if (this.state.showingInfoWindow) {
             this.setState({
                 showingInfoWindow: false,
@@ -89,8 +93,10 @@ class App extends Component {
         }
     }
 
-    test() {
-        console.log(123);
+    showAdvancedSearch() {
+        this.setState({
+            advanced_search_visible: ''
+        })
     }
 
     render() {
@@ -103,7 +109,7 @@ class App extends Component {
             <div className="App">
                 <div>
                     <SearchBar
-                        onClick={this.fetch_data}
+                        onClick={this.fetchData}
                         onChange={event => {
                             console.log(event.target.value);
                             this.setState({
@@ -113,6 +119,7 @@ class App extends Component {
                                 }
                             })
                         }}
+                        onFocus={this.showAdvancedSearch}
                         defaultValue={this.state.searchParam.s}
                     />
                 </div>
@@ -147,6 +154,20 @@ class App extends Component {
                             </div>
                         </InfoWindow>
                     </Map>
+                </div>
+                <div>
+                    <div style={{zIndex: 99, position: 'absolute', top: 100, left: 20, backgroundColor: 'white',
+                        visibility: this.state.advanced_search_visible}}>
+                        <text>available:</text>
+                        <input type={'text'}
+                               defaultValue={this.state.searchParam.available}
+                               onChange={event => {
+                                   let newParam = this.state.searchParam;
+                                   newParam.available = event.target.value;
+                                   this.setState({searchParam: newParam});
+                               }}
+                        />
+                    </div>
                 </div>
             </div>
 

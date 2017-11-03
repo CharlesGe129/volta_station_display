@@ -7,6 +7,7 @@ export default class SearchBar extends Component {
                 <input type={'text'}
                        defaultValue={this.props.defaultValue}
                        onChange={this.props.onChange}
+                       onFocus={this.props.onFocus}
                        style={{height: 30, width: 800}}
                 />
                 <button
