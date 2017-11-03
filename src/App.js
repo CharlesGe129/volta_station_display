@@ -15,13 +15,19 @@ class App extends Component {
                 to: '',
                 from: '',
                 status: '',
-                limit: '5',
+                limit: '',
                 offset: '',
                 orderby: '',
                 sortdir: '',
                 returns: '',
-            }
-        }
+            },
+            data: null,
+            loaded: false
+        };
+    }
+
+    componentWillMount() {
+        this.fetch_data();
     }
 
     gen_url() {
@@ -46,20 +52,41 @@ class App extends Component {
         })
             .then((response) => response.json())
             .then((responseData) => {
-                console.log(responseData)
+                this.setState({
+                    data: responseData,
+                    loaded: true,
+                });
             });
-        return 'hello';
     }
 
     render() {
+        if (!this.state.loaded) {
+            return (
+                <p>Loading...</p>
+            )
+        }
         return (
             <div className="App">
                 <div>
-                    <Map google={this.props.google} zoom={14}>
-
-                        <Marker onClick={this.onMarkerClick}
-                                name={'Current location'} />
-
+                    <p>Hello world</p>
+                </div>
+                <div>
+                    <Map google={this.props.google} zoom={13} initialCenter={{
+                        lat: this.state.data[0].location.coordinates[1],
+                        lng: this.state.data[0].location.coordinates[0]
+                    }}>
+                        {this.state.data.map(each => {
+                            let lat = each.location.coordinates[1];
+                            let lng = each.location.coordinates[0];
+                            return (
+                                <Marker
+                                    title={'The marker`s title will appear as a tooltip.'}
+                                    name={'SOMA'}
+                                    position={{lat: lat, lng: lng}}
+                                    // onMouseover={}
+                                    // onClick={}
+                                />)
+                        })}
                         <InfoWindow onClose={this.onInfoWindowClose}>
                             <div>
                                 <h1>{'3333'}</h1>
