@@ -56,6 +56,9 @@ class App extends Component {
     }
 
     fetch_data() {
+        this.setState({
+            loaded: false
+        });
         fetch(this.gen_url(), {
             Method: 'GET'
         })
@@ -100,21 +103,30 @@ class App extends Component {
             <div className="App">
                 <div>
                     <h1>hello world</h1>
-                    <SearchBar onClick={this.fetch_data} onChange={event => {
-                        console.log(event.target.value);
-                        this.setState({
-                            searchParam: {
-                                s: event.target.value,
-                                limit: '5'
-                            }
-                        })
-                    }}/>
+                    <SearchBar
+                        onClick={this.fetch_data}
+                        onChange={event => {
+                            console.log(event.target.value);
+                            this.setState({
+                                searchParam: {
+                                    s: event.target.value,
+                                    limit: '5'
+                                }
+                            })
+                        }}
+                        defaultValue={this.state.searchParam.s}
+                    />
                 </div>
                 <div>
-                    <Map google={this.props.google} zoom={13} initialCenter={{
-                        lat: this.state.data[0].location.coordinates[1],
-                        lng: this.state.data[0].location.coordinates[0]
-                    }} onClick={this.onMapClicked} >
+                    <Map
+                        google={this.props.google}
+                        zoom={13}
+                        initialCenter={{
+                            lat: this.state.data[0].location.coordinates[1],
+                            lng: this.state.data[0].location.coordinates[0]
+                        }}
+                        onClick={this.onMapClicked}
+                    >
                         {this.state.data.map(each => {
                             let lat = each.location.coordinates[1];
                             let lng = each.location.coordinates[0];
@@ -123,7 +135,6 @@ class App extends Component {
                                     data={each}
                                     name={'SOMA'}
                                     position={{lat: lat, lng: lng}}
-                                    // onMouseover={}
                                     onClick={this.onMarkerClick}
                                 />)
                         })}
