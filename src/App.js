@@ -22,8 +22,13 @@ class App extends Component {
                 returns: '',
             },
             data: null,
-            loaded: false
+            loaded: false,
+            showingInfoWindow: false,
+            activeMarker: {},
+            selectedPlace: {},
         };
+        this.onMarkerClick = this.onMarkerClick.bind(this);
+        this.onMapClicked = this.onMapClicked.bind(this);
     }
 
     componentWillMount() {
@@ -59,6 +64,24 @@ class App extends Component {
             });
     }
 
+    onMarkerClick(props, marker, e) {
+        console.log(props);
+        this.setState({
+            selectedPlace: props.data,
+            activeMarker: marker,
+            showingInfoWindow: true
+        });
+    }
+
+    onMapClicked(props) {
+        if (this.state.showingInfoWindow) {
+            this.setState({
+                showingInfoWindow: false,
+                activeMarker: null
+            })
+        }
+    }
+
     render() {
         if (!this.state.loaded) {
             return (
@@ -74,22 +97,26 @@ class App extends Component {
                     <Map google={this.props.google} zoom={13} initialCenter={{
                         lat: this.state.data[0].location.coordinates[1],
                         lng: this.state.data[0].location.coordinates[0]
-                    }}>
+                    }} onClick={this.onMapClicked} >
                         {this.state.data.map(each => {
                             let lat = each.location.coordinates[1];
                             let lng = each.location.coordinates[0];
                             return (
                                 <Marker
-                                    title={'The marker`s title will appear as a tooltip.'}
+                                    data={each}
                                     name={'SOMA'}
                                     position={{lat: lat, lng: lng}}
                                     // onMouseover={}
-                                    // onClick={}
+                                    onClick={this.onMarkerClick}
                                 />)
                         })}
-                        <InfoWindow onClose={this.onInfoWindowClose}>
+                        <InfoWindow
+                            marker={this.state.activeMarker}
+                            visible={this.state.showingInfoWindow}>
                             <div>
-                                <h1>{'3333'}</h1>
+                                <h1>Name: {this.state.selectedPlace.name}</h1>
+                                <p>Status: {this.state.selectedPlace.status}</p>
+                                <p>Address: {this.state.selectedPlace.street_address}</p>
                             </div>
                         </InfoWindow>
                     </Map>
