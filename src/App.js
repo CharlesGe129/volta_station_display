@@ -1,5 +1,4 @@
 import React, {Component} from 'react';
-import logo from './logo.svg';
 import './App.css';
 import {Map, InfoWindow, Marker, GoogleApiWrapper} from 'google-maps-react';
 import SearchBar from './SearchBar'
@@ -81,7 +80,8 @@ class App extends Component {
                             orderby: '',
                             sortdir: '',
                             returns: '',
-                        }
+                        },
+                        searchItemVisible: 'hidden'
                     });
                     this.fetchData();
                 }
@@ -89,6 +89,7 @@ class App extends Component {
                     this.setState({
                         data: responseData,
                         loaded: true,
+                        searchItemVisible: 'hidden'
                     });
                 }
 
