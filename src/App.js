@@ -28,7 +28,7 @@ class App extends Component {
             showingInfoWindow: false,
             activeMarker: {},
             selectedPlace: {},
-            advanced_search_visible: 'hidden'
+            searchItemVisible: 'hidden'
         };
         this.onMarkerClick = this.onMarkerClick.bind(this);
         this.onMapClicked = this.onMapClicked.bind(this);
@@ -66,10 +66,32 @@ class App extends Component {
         })
             .then((response) => response.json())
             .then((responseData) => {
-                this.setState({
-                    data: responseData,
-                    loaded: true,
-                });
+                if (responseData['errorMessage']) {
+                    alert("Wrong search parameters!");
+                    this.setState({
+                        searchParam: {
+                            s: '',
+                            available: '',
+                            bounding: '',
+                            to: '',
+                            from: '',
+                            status: '',
+                            limit: '5',
+                            offset: '',
+                            orderby: '',
+                            sortdir: '',
+                            returns: '',
+                        }
+                    });
+                    this.fetchData();
+                }
+                else {
+                    this.setState({
+                        data: responseData,
+                        loaded: true,
+                    });
+                }
+
             });
     }
 
@@ -84,7 +106,7 @@ class App extends Component {
 
     onMapClicked(props) {
         this.setState({
-            advanced_search_visible: 'hidden'
+            searchItemVisible: 'hidden'
         });
         if (this.state.showingInfoWindow) {
             this.setState({
@@ -96,7 +118,7 @@ class App extends Component {
 
     showAdvancedSearch() {
         this.setState({
-            advanced_search_visible: ''
+            searchItemVisible: ''
         })
     }
 
@@ -106,19 +128,22 @@ class App extends Component {
                 <p>Loading...</p>
             )
         }
+        let top = 100;
+        let left = -230;
+        let searchItems = [];
+        for (let key in this.state.searchParam) {
+            if (key === 's') continue;
+            searchItems.push([key, this.state.searchParam[key]])
+        }
         return (
             <div className="App">
                 <div>
                     <SearchBar
                         onClick={this.fetchData}
                         onChange={event => {
-                            console.log(event.target.value);
-                            this.setState({
-                                searchParam: {
-                                    s: event.target.value,
-                                    limit: '5'
-                                }
-                            })
+                            let newParam = this.state.searchParam;
+                            newParam.s = event.target.value;
+                            this.setState({searchParam: newParam});
                         }}
                         onFocus={this.showAdvancedSearch}
                         defaultValue={this.state.searchParam.s}
@@ -157,27 +182,26 @@ class App extends Component {
                     </Map>
                 </div>
                 <div>
-                    {/*<div style={{zIndex: 99, position: 'absolute', top: 100, left: 20, backgroundColor: 'white',*/}
-                        {/*visibility: this.state.advanced_search_visible}}>*/}
-                        {/*<text>available:</text>*/}
-                        {/*<input type={'text'}*/}
-                               {/*defaultValue={this.state.searchParam.available}*/}
-                               {/*onChange={event => {*/}
-                                   {/*let newParam = this.state.searchParam;*/}
-                                   {/*newParam.available = event.target.value;*/}
-                                   {/*this.setState({searchParam: newParam});*/}
-                               {/*}}*/}
-                        {/*/>*/}
-                    {/*</div>*/}
-                    <SearchItem visibility={this.state.advanced_search_visible}
-                                defaultValue={this.state.searchParam.available}
-                                onChange={event => {
-                                    let newParam = this.state.searchParam;
-                                    newParam.available = event.target.value;
-                                    this.setState({searchParam: newParam});
-                                }}
-                    />
-
+                    {searchItems.map(each => {
+                        left += 250;
+                        if (left > 520) {
+                            left = 20;
+                            top += 30;
+                        }
+                        console.log(left + "-" + top);
+                        return (
+                            <SearchItem visibility={this.state.searchItemVisible}
+                                        defaultValue={each[1]}
+                                        onChange={event => {
+                                            let newParam = this.state.searchParam;
+                                            newParam[each[0]] = event.target.value;
+                                            this.setState({searchParam: newParam});
+                                        }}
+                                        top={top}
+                                        left={left}
+                                        label={each[0]}
+                            />)
+                    })}
                 </div>
             </div>
 
