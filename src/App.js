@@ -3,6 +3,7 @@ import logo from './logo.svg';
 import './App.css';
 import {Map, InfoWindow, Marker, GoogleApiWrapper} from 'google-maps-react';
 import SearchBar from './SearchBar'
+import SearchItem from './SearchItem'
 
 class App extends Component {
 
@@ -156,18 +157,27 @@ class App extends Component {
                     </Map>
                 </div>
                 <div>
-                    <div style={{zIndex: 99, position: 'absolute', top: 100, left: 20, backgroundColor: 'white',
-                        visibility: this.state.advanced_search_visible}}>
-                        <text>available:</text>
-                        <input type={'text'}
-                               defaultValue={this.state.searchParam.available}
-                               onChange={event => {
-                                   let newParam = this.state.searchParam;
-                                   newParam.available = event.target.value;
-                                   this.setState({searchParam: newParam});
-                               }}
-                        />
-                    </div>
+                    {/*<div style={{zIndex: 99, position: 'absolute', top: 100, left: 20, backgroundColor: 'white',*/}
+                        {/*visibility: this.state.advanced_search_visible}}>*/}
+                        {/*<text>available:</text>*/}
+                        {/*<input type={'text'}*/}
+                               {/*defaultValue={this.state.searchParam.available}*/}
+                               {/*onChange={event => {*/}
+                                   {/*let newParam = this.state.searchParam;*/}
+                                   {/*newParam.available = event.target.value;*/}
+                                   {/*this.setState({searchParam: newParam});*/}
+                               {/*}}*/}
+                        {/*/>*/}
+                    {/*</div>*/}
+                    <SearchItem visibility={this.state.advanced_search_visible}
+                                defaultValue={this.state.searchParam.available}
+                                onChange={event => {
+                                    let newParam = this.state.searchParam;
+                                    newParam.available = event.target.value;
+                                    this.setState({searchParam: newParam});
+                                }}
+                    />
+
                 </div>
             </div>
 
