@@ -49,7 +49,7 @@ class App extends Component {
             if (value === '') {
                 continue;
             }
-            param += param === '' ? '?'  : '&';
+            param += param === '' ? '?' : '&';
             param += key + '=' + value;
         }
         url += param;
@@ -129,7 +129,7 @@ class App extends Component {
             )
         }
         let top = 100;
-        let left = -230;
+        let left = -225;
         let searchItems = [];
         for (let key in this.state.searchParam) {
             if (key === 's') continue;
@@ -182,10 +182,14 @@ class App extends Component {
                     </Map>
                 </div>
                 <div>
+                    <label style={{
+                        zIndex: 50, position: 'absolute', top: 50, left: 22, backgroundColor: 'white',
+                        height: 170, width: 803, visibility: this.state.searchItemVisible
+                    }}>Hello world</label>
                     {searchItems.map(each => {
                         left += 250;
-                        if (left > 520) {
-                            left = 20;
+                        if (left > 525) {
+                            left = 25;
                             top += 30;
                         }
                         console.log(left + "-" + top);
