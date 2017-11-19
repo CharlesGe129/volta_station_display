@@ -3,6 +3,7 @@ import './App.css';
 import {Map, InfoWindow, Marker, GoogleApiWrapper} from 'google-maps-react';
 import SearchBar from './SearchBar'
 import SearchItem from './SearchItem'
+import SideBar from './SideBar'
 
 class App extends Component {
 
@@ -22,18 +23,26 @@ class App extends Component {
                 sortdir: '',
                 returns: '',
             },
+            initCoords: {
+                lat: 121,
+                lng: -31
+            },
             data: null,
             loaded: false,
             showingInfoWindow: false,
             activeMarker: {},
             selectedPlace: {},
-            searchItemVisible: 'hidden'
+            searchItemVisible: 'hidden',
+            reload: false,
+            sidebarVisible: ''
         };
         this.onMarkerClick = this.onMarkerClick.bind(this);
         this.onMapClicked = this.onMapClicked.bind(this);
         this.genUrl = this.genUrl.bind(this);
         this.fetchData = this.fetchData.bind(this);
         this.showAdvancedSearch = this.showAdvancedSearch.bind(this);
+        this.onSideBarClick = this.onSideBarClick.bind(this);
+        this.showSideBar = this.showSideBar.bind(this);
     }
 
     componentWillMount() {
@@ -81,18 +90,22 @@ class App extends Component {
                             sortdir: '',
                             returns: '',
                         },
-                        searchItemVisible: 'hidden'
+                        searchItemVisible: 'hidden',
                     });
                     this.fetchData();
                 }
                 else {
+                    let coords = responseData.length === 0 ? {coordinates: [31, 121]} : responseData[0].location;
                     this.setState({
                         data: responseData,
                         loaded: true,
-                        searchItemVisible: 'hidden'
+                        searchItemVisible: 'hidden',
+                        initCoords: {
+                            lat: coords.coordinates[1],
+                            lng: coords.coordinates[0]
+                        }
                     });
                 }
-
             });
     }
 
@@ -107,7 +120,8 @@ class App extends Component {
 
     onMapClicked(props) {
         this.setState({
-            searchItemVisible: 'hidden'
+            searchItemVisible: 'hidden',
+            sidebarVisible: 'hidden'
         });
         if (this.state.showingInfoWindow) {
             this.setState({
@@ -123,8 +137,30 @@ class App extends Component {
         })
     }
 
+    onSideBarClick(coords) {
+        this.setState({
+            initCoords: coords,
+            reload: true
+        });
+    }
+
+    showSideBar() {
+        // this.setState({
+        //     sidebarVisible: ''
+        // });
+    }
+
     render() {
         if (!this.state.loaded) {
+            return (
+                <p>Loading...</p>
+            )
+        }
+        if (this.state.reload) {
+            console.log(this.state.reload);
+            this.setState({
+                reload: false
+            });
             return (
                 <p>Loading...</p>
             )
@@ -151,12 +187,20 @@ class App extends Component {
                     />
                 </div>
                 <div>
+                    {/*<button style={{position: 'absolute', left: '80%', fontSize: '20px', zIndex: '99'}}*/}
+                            {/*onclick={this.showSideBar()}>Station List</button>*/}
+                    <SideBar content={this.state.data}
+                             onClick={(coords) => this.onSideBarClick(coords)}
+                             visibility={this.state.sidebarVisible}
+                    />
+                </div>
+                <div>
                     <Map
                         google={this.props.google}
                         zoom={13}
                         initialCenter={{
-                            lat: this.state.data[0].location.coordinates[1],
-                            lng: this.state.data[0].location.coordinates[0]
+                            lat: this.state.initCoords.lat,
+                            lng: this.state.initCoords.lng
                         }}
                         onClick={this.onMapClicked}
                     >
